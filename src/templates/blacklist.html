@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+    <title>DiscBL / Blacklist</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="blacklist_object">
+        {% for category, items in blacklist.items() %}
+            {% for hash_val, urls in items.items() %}
+                <div class="card">
+                    <span class="category">Category: {{ category }}</span>
+                    <p>Hash: <span class="hash">{{ hash_val }}</span></p>
+                    <p>URLs:</p>
+                    {% for url in urls %}
+                        <a class="url" href="{{ url }}" target="_blank">{{ url }}</a></li>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="footer">
+        Made with 🤍 by sudoloser
+    </div>
+</body>

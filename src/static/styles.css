@@ -1,0 +1,16 @@
+body {
+    background-color: black;
+
+    text-align: center;
+    color: whitesmoke;
+}
+
+.footer { 
+    position: relative;
+    position: absolute; bottom: 0;
+}
+
+.card { background: #1a1a24; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #2e2e3e; }
+.hash { color: #88c0d0; font-weight: bold; }
+.url { color: #a3be8c; word-break: break-all; }
+.category { color: #ebcb8b; text-transform: uppercase; font-size: 0.8rem; font-weight: bold; }
