@@ -33,7 +33,7 @@ The search returns this little piece of Json if found:
 ```Json
 {
     "found": "true",
-    "hash": "[file_hash]
+    "hash": "[file_hash]"
 }
 ```
 And this if not found:
