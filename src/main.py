@@ -62,8 +62,8 @@ async def blacklist_search(file_hash: str = None):
         for category, items in blacklist.items():
             for item in items:
                 if item == file_hash.lower():
-                    return {"status": "found", "hash": file_hash}
-        return {"status": "not found"}
+                    return {"found": "true", "hash": file_hash}
+        return {"found": "false"}
 
 @app.get("/blacklist/view")
 async def blacklist_view(request: Request, c: str = "all"):

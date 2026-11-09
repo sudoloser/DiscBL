@@ -8,10 +8,8 @@ Discord bot developers can use this endpoint to automatically delete hash-verifi
 
 # How to use this?
 
-To use this API, send a GET request to the following URL:
+For the full blacklist per category:
 `https://discbl.sdlsr.dpdns.org/blacklist?category=[category]`
-
-Permitted categories can be found [here](https://discbl.sdlsr.dpdns.org/blacklist/view)
 
 The response looks like this:
 ```Json
@@ -27,6 +25,26 @@ The response looks like this:
   }
 }
 ```
+
+Or you can use the search to avoid somewhat large data usage:
+`https://discbl.sdlsr.dpdns.org/blacklist/search?file_hash=[file_hash]`
+
+The search returns this little piece of Json if found:
+```Json
+{
+    "found": "true",
+    "hash": "[file_hash]
+}
+```
+And this if not found:
+```Json
+{
+    "found": "false"
+}
+```
+
+
+Permitted categories can be found [here](https://discbl.sdlsr.dpdns.org/blacklist/view)
 
 # Get started with self hosting
 
