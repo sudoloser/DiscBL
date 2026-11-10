@@ -2,6 +2,9 @@
 
 DiscBL is an endpoint that returns a JSON key array of blacklisted URLS.
 
+> [!IMPORTANT]
+> This is very early! As a matter of fact, i haven't even added a way to request a blacklist! This is also very unneccesary for the average bot, and mostly just to help me learn APIs.
+
 # Why?
 
 Discord bot developers can use this endpoint to automatically delete hash-verified blacklisted URLs such as porn and gore.
