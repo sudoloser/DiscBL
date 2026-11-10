@@ -10,6 +10,8 @@ from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
+from pathlib import Path
+
 load_dotenv()
 
 api_key = os.getenv("API_KEY")
@@ -20,9 +22,17 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+
 filename = "blacklist.json"
-with open(filename, 'r', encoding="utf-8") as file:
-    blacklist = json.load(file)
+filepath = Path(filename)
+
+if filepath.is_file():
+    with open(filename, 'r', encoding="utf-8") as file:
+        blacklist = json.load(file)
+else:
+    with open(filename, 'w', encoding="utf-8") as file:
+        file.write("{}")
+
 
 categories = []
 for i in blacklist:
@@ -71,11 +81,14 @@ async def blacklist_view(request: Request, c: str = "all"):
     if c.lower() == "all":
         temp = blacklist
     else:
-        c = c.lower()
-        temp = {
-            c: {}
-        }
-        temp[c] = blacklist[c]
+        if c in blacklist:
+            c = c.lower()
+            temp = {
+                c: {}
+            }
+            temp[c] = blacklist[c]
+        else:
+            return {"error", "Provided category does not exist"}
     return templates.TemplateResponse(
         request = request,
         name = "blacklist.html",

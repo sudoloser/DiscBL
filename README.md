@@ -9,12 +9,11 @@ Discord bot developers can use this endpoint to automatically delete hash-verifi
 # How to use this?
 
 For the full blacklist per category:
-`https://discbl.sdlsr.dpdns.org/blacklist?category=[category]`
+`https://discbl.sdlsr.dpdns.org/blacklist?c=[category]`
 
-The response looks like this:
+The response is an object that maps each file hash in that category to the list of known URLs:
 ```Json
 {
-  "[category]": {
     "[hash]": [
         "[knownlink]",
         "[another known link]"
@@ -22,7 +21,6 @@ The response looks like this:
     "[hash2]": [
         "[knownlink]"
     ]
-  }
 }
 ```
 
@@ -43,8 +41,10 @@ And this if not found:
 }
 ```
 
+A human readable view of the blacklist is available at `/blacklist/view`:
+`https://discbl.sdlsr.dpdns.org/blacklist/view`
 
-Permitted categories can be found [here](https://discbl.sdlsr.dpdns.org/blacklist/view)
+It shows every category by default; pass `?c=[category]` to view a single one.
 
 # Get started with self hosting
 
@@ -61,6 +61,14 @@ Generate the Api Key:
 python3 generate_api_key.py
 ```
 
+Create the blacklist file:
+
+The server reads `blacklist.json` on startup and does not create it, so the file must already exist. An empty blacklist is just an empty object:
+
+```Bash
+echo '{}' > blacklist.json
+```
+
 Create the .env:
 
 ```env
@@ -68,10 +76,16 @@ API_KEY=sat_...
 BASE_DOMAIN=YourDomainOrLocalHost
 ```
 
-Run the server:
+Run the server. The `blacklist.json`, `templates` and `static` paths are relative, so the server has to be started from inside `src`:
 
 ```Bash
 uvicorn main:app
+```
+
+Or use the included `start.sh`, which installs the dependencies and serves on port 19291:
+
+```Bash
+./start.sh
 ```
 
 ### Blacklisting
@@ -81,3 +95,5 @@ You can blacklist Hashes/URLS on your own server by sending a GET request to `/b
 ```URI
 https://example.com/blacklist/add?auth=sat_...&c=[category]&file_hash=[file_hash]&url=[file_url]
 ```
+
+If the category or hash does not exist yet it is created, and the URL is appended to the hash otherwise. The endpoint answers with an error object when a parameter is missing, the key is wrong, or the URL is already listed for that hash.

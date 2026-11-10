@@ -1,5 +1,5 @@
 aiohttp
 fastapi
 uvicorn
-dotenv
+python-dotenv
 jinja2
