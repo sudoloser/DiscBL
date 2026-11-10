@@ -78,11 +78,11 @@ async def blacklist_search(file_hash: str = None):
 @app.get("/blacklist/view")
 async def blacklist_view(request: Request, c: str = "all"):
 
-    if c.lower() == "all":
+    c = c.lower()
+    if c == "all":
         temp = blacklist
     else:
         if c in blacklist:
-            c = c.lower()
             temp = {
                 c: {}
             }
