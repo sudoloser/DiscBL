@@ -16,7 +16,6 @@ load_dotenv()
 
 api_key = os.getenv("API_KEY")
 base_domain = str(os.getenv("BASE_DOMAIN"))
-base_url = "https://" + base_domain
 
 # Define a new fastapi app
 app = FastAPI()
@@ -59,19 +58,24 @@ async def health():
 @app.get("/blacklist")
 async def blacklist_route(c: str = None):
     if c is None:
-        return {"Error": "Please provide the desired category in the query."}
+        return {"error": "Please provide the desired category in the query."}
     if c in blacklist and blacklist[c]:
         return blacklist[c]
-    return {"Error": f"Provided category is not valid. Available categories: {categories}"}
+    return {"error": f"Provided category is not valid. Available categories: {categories}"}
 
 @app.get("/blacklist/search")
 async def blacklist_search(c: str = None, file_hash: str = None):
     found = False
     c = c.lower()
-    file_hash = file_hash.lower()
+
 
     if file_hash is None:
         return {"error": "Please specify a File Hash to query for."}
+    elif c is None:
+        return {"error": "Please specify a category to query in."}
+    else:
+        file_hash = file_hash.lower()
+        c = c.lower
     else:
         if c is not None:
             if c in blacklist:
@@ -106,7 +110,7 @@ async def blacklist_view(request: Request, c: str = "all"):
             }
             temp[c] = blacklist[c]
         else:
-            return {"error", "Provided category does not exist"}
+            return {"error": "Provided category does not exist"}
     return templates.TemplateResponse(
         request = request,
         name = "blacklist.html",
@@ -119,22 +123,27 @@ async def blacklist_view(request: Request, c: str = "all"):
 async def blacklist_add(auth: str = None, c: str = None, file_hash: str = None, url: str = None):
 
     if auth is None:
-        return {"Error": "Access not permitted"}
+        return {"error": "Access not permitted"}
     if c is None:
-        return {"Error": "Please provide a category to add to"}
+        return {"error": "Please provide a category to add to"}
     if file_hash is None:
-        return {"Error": "Please provide file hash"}
+        return {"error": "Please provide file hash"}
     if url is None:
-        return {"Error": "Please provide media url"}
+        return {"error": "Please provide media url"}
+    else:
+        auth = auth.lower()
+        c = c.lower()
+        file_hash = file_hash.lower()
+        url = url.lower()
 
     if auth != api_key:
-        return {"Error": "Access not permitted"}
+        return {"error": "Access not permitted"}
     else:
         if c in blacklist:
             if file_hash in blacklist[c]:
                 for i in blacklist[c][file_hash]:
                     if i == url:
-                        return {"Error": "The provided url is already present in the blacklist."}
+                        return {"error": "The provided url is already present in the blacklist."}
                 blacklist[c][file_hash].append(url)
             else:
                 blacklist[c][file_hash] = [
