@@ -66,18 +66,15 @@ async def blacklist_route(c: str = None):
 @app.get("/blacklist/search")
 async def blacklist_search(c: str = None, file_hash: str = None):
     found = False
-    c = c.lower()
-
 
     if file_hash is None:
         return {"error": "Please specify a File Hash to query for."}
-    elif c is None:
-        return {"error": "Please specify a category to query in."}
     else:
         file_hash = file_hash.lower()
-        c = c.lower
     else:
         if c is not None:
+            c = c.lower()
+
             if c in blacklist:
                 for hash in blacklist[c]:
                     if hash == file_hash:
@@ -131,10 +128,8 @@ async def blacklist_add(auth: str = None, c: str = None, file_hash: str = None, 
     if url is None:
         return {"error": "Please provide media url"}
     else:
-        auth = auth.lower()
         c = c.lower()
         file_hash = file_hash.lower()
-        url = url.lower()
 
     if auth != api_key:
         return {"error": "Access not permitted"}
