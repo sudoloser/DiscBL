@@ -15,7 +15,8 @@ from pathlib import Path
 load_dotenv()
 
 api_key = os.getenv("API_KEY")
-base_domain = os.getenv("BASE_DOMAIN")
+base_domain = str(os.getenv("BASE_DOMAIN"))
+base_url = "https://" + base_domain
 
 # Define a new fastapi app
 app = FastAPI()
@@ -57,7 +58,6 @@ async def health():
 
 @app.get("/blacklist")
 async def blacklist_route(c: str = None):
-
     if c is None:
         return {"Error": "Please provide the desired category in the query."}
     if c in blacklist and blacklist[c]:
@@ -65,20 +65,38 @@ async def blacklist_route(c: str = None):
     return {"Error": f"Provided category is not valid. Available categories: {categories}"}
 
 @app.get("/blacklist/search")
-async def blacklist_search(file_hash: str = None):
+async def blacklist_search(c: str = None, file_hash: str = None):
+    found = False
+    c = c.lower()
+    file_hash = file_hash.lower()
+
     if file_hash is None:
-        return {"Error": "Please specifiy a File Hash to query for."}
+        return {"error": "Please specify a File Hash to query for."}
     else:
-        for category, items in blacklist.items():
-            for item in items:
-                if item == file_hash.lower():
-                    return {"found": "true", "hash": file_hash}
-        return {"found": "false"}
+        if c is not None:
+            if c in blacklist:
+                for hash in blacklist[c]:
+                    if hash == file_hash:
+                        found = True
+                        break
+            else:
+                return {"error": f"Your specified category does not seem to exist. Valid categories: {categories}"}
+
+        else:
+            for category, items in blacklist.items():
+                for item in items:
+                    if item == file_hash.lower():
+                        found = True
+                        break
+        if found == True:
+            return {"found": "true", "hash": file_hash}
+        else:
+            return {"found": "false"}
 
 @app.get("/blacklist/view")
 async def blacklist_view(request: Request, c: str = "all"):
-
     c = c.lower()
+
     if c == "all":
         temp = blacklist
     else:
